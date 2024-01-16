@@ -38,7 +38,7 @@ public class TextFileHandler {
     
     private final String extension;
     
-    private int count;
+    private int countLocks;
     
     private Map<String, String> lock;  
     
@@ -209,7 +209,7 @@ public class TextFileHandler {
         
         charset = Charset.forName(charsetName);
         
-        count = 0;
+        countLocks = 0;
         
         lock = new HashMap<>();  
         
@@ -229,6 +229,22 @@ public class TextFileHandler {
          this(pathname, Charset.defaultCharset().toString());
          
     }//construtor
+    
+    /**
+     * Carrega um novo conteúdo para o objeto <b><i>TextFileHandler</i></b>.
+     * Descartando o anterior.
+     * 
+     * @param newContent Novo conteúdo.
+     */
+    /*-------------------------------------------------------------------------
+ 
+    --------------------------------------------------------------------------*/  
+    public void setContent(final String newContent) {
+        
+        content = newContent;
+        scanner = new Scanner(content);
+        
+    }//setContent
     
     /**
      * O objetivo deste método é bloquear certos padrões de substrings, para 
@@ -274,7 +290,7 @@ public class TextFileHandler {
         
         while ((match = regex.find()) != null) {
             
-            lock.put("\u0ca0\u13c8" + count++ + "\u13da\u0ca0", match);
+            lock.put("\u0ca0\u13c8" + countLocks++ + "\u13da\u0ca0", match);
         }
         
         for (String key : lock.keySet()) {
@@ -325,6 +341,25 @@ public class TextFileHandler {
     }//lock  
     
     /**
+     * Restaura todos os blocos que foram travados para edição.
+     */
+    /*-------------------------------------------------------------------------
+ 
+    --------------------------------------------------------------------------*/       
+    public void restoreLocks() {
+        
+        for (String key : lock.keySet()) {
+            
+            content = content.replace(key, lock.get(key));
+        } 
+        
+        lock = new HashMap<>();
+        
+        countLocks = 0;
+        
+    }//restoreLocks
+    
+    /**
      * Possibilita editar todas as substrings do arquivo que corresponderem ao 
      * padrão.
      * 
@@ -350,7 +385,9 @@ public class TextFileHandler {
         
         while ((match = regex.find()) != null) {
             
-            map.put(match, editor.edit(match));
+            String edited = editor.edit(match);
+            
+            if (edited != null) map.put(match, edited);
         }
         
         for (String key : map.keySet()) {
@@ -358,14 +395,7 @@ public class TextFileHandler {
             content = content.replace(key, map.get(key));
         }
         
-        for (String key : lock.keySet()) {
-            
-            content = content.replace(key, lock.get(key));
-        } 
-        
-        count = 0;
-        
-        lock = new HashMap<>();
+        restoreLocks();
         
         scanner = new Scanner(content);
            
@@ -403,9 +433,7 @@ public class TextFileHandler {
     --------------------------------------------------------------------------*/     
     public void read() throws IOException {
                    
-        content = Files.readString(Path.of(pathname), charset);
-        
-        scanner = new Scanner(content);
+        setContent( Files.readString(Path.of(pathname), charset) );
         
     }//read
     
@@ -445,7 +473,29 @@ public class TextFileHandler {
         
         write(pathname);
         
-    }//write  
+    }//write 
+    
+    /**
+     * Obtém o nome do arquivo que será gravado pelo método 
+     * {@link toolbox.TextFileHandler#writeWithExtPrefix(java.lang.String) 
+     * writeWithExtPrefix}, caso o argumento <b><i>extensionPrefix</i></b> seja
+     * passado a este.
+     * 
+     * @param extensionPrefix O prefixo.
+     * 
+     * @return O nome do arquivo que seria gravado com esste prefixo usado na
+     * extensão.
+     */
+    /*-------------------------------------------------------------------------
+ 
+    --------------------------------------------------------------------------*/      
+    public String getFilenameWithExtPrefix(final String extensionPrefix) {
+        
+       String ext = getExt(); 
+
+       return pathname.replace(ext, extensionPrefix + '.' + ext);      
+       
+    }//getFilenameWithExtPrefix
     
     /**
      * Grava o arquivo no disco em outro arquivo diferente do que foi lido, mas
@@ -464,10 +514,8 @@ public class TextFileHandler {
     --------------------------------------------------------------------------*/     
     public void writeWithExtPrefix(final String extensionPrefix)
         throws IOException {
-        
-        String ext = getExt();
-        
-        write(pathname.replace(ext, extensionPrefix + '.' + ext));
+       
+        write(getFilenameWithExtPrefix(extensionPrefix));
         
     }//writeWithExtPrefix
     

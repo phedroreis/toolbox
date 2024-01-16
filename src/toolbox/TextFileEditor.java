@@ -26,14 +26,16 @@ public abstract class TextFileEditor {
      * pelo parâmetro <b><i>match</i></b>, realizar as edições necessárias e 
      * retornar uma string que seja a versão editada de <b><i>match</i></b>. 
      * Esta string retornada substituirá a string <b><i>match</i></b> que foi 
-     * localizada</p>
+     * localizada.Ou então <code>null</code>, se o método decidir que a 
+     * substring original não deve ser modificada.</p>
      * 
      * @param match Uma substring do arquivo lido por um objeto TextFileHandler
      * e que foi localizada para edição, devendo ser substituída por uma outra 
      * string que seja uma edição desta. Caberá a uma implementação deste método
      * realizar tais edições.
      * 
-     * @return A versão modificada da string <b><i>match</i></b>.
+     * @return A versão modificada da string <b><i>match</i></b> ou 
+     * <code>null</code> se a string não deve ser modificada.
      */
     public abstract String edit(final String match);
     

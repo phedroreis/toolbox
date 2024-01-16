@@ -45,7 +45,9 @@ public final class SearchFolder {
      * regex.
      * 
      * @param regex Uma expressão regular para filtrar a pesquisa. A regex 
-     * verificará correspondência com nome e extensão dos arquivos. 
+     * verificará correspondência com nome e extensão dos arquivos. Se for 
+     * passada com valor <code>null</code>, a pesquisa retornará todos os
+     * arquivos.
      * 
      * @param searchDirs Se true, estenderá a pesquisa aos subdiretórios.
      * 
@@ -145,8 +147,8 @@ public final class SearchFolder {
         @Override
         public boolean accept(File pathname) {
             
-            if (fileFilterRegex == null) return true;
             if (pathname.isDirectory()) return searchDirs;
+            if (fileFilterRegex == null) return true;            
             return pathname.getName().matches(fileFilterRegex); 
             
         }
