@@ -6,7 +6,8 @@ package toolbox;
  * 
  * <p>Um objeto TextFileEditor (instância de uma classe que estenda esta) deve
  * ser passado ao método 
- * {@link toolbox.TextFileHandler#edit(toolbox.Regex, toolbox.TextFileEditor) edit}
+ * {@link toolbox.TextFileHandler#edit(toolbox.Regex, java.lang.String[],
+ * toolbox.TextFileEditor)  edit}
  * para que sua implementação do método abstrato desta classe se encarregue de
  * fazer edições nas Strings localizadas, elegíveis para edição.</p>
  * 
@@ -26,7 +27,7 @@ public abstract class TextFileEditor {
      * pelo parâmetro <b><i>match</i></b>, realizar as edições necessárias e 
      * retornar uma string que seja a versão editada de <b><i>match</i></b>. 
      * Esta string retornada substituirá a string <b><i>match</i></b> que foi 
-     * localizada.Ou então <code>null</code>, se o método decidir que a 
+     * localizada. Ou então <code>null</code>, se o método decidir que a 
      * substring original não deve ser modificada.</p>
      * 
      * @param match Uma substring do arquivo lido por um objeto TextFileHandler
@@ -40,3 +41,4 @@ public abstract class TextFileEditor {
     public abstract String edit(final String match);
     
 }//classe TextFileEditor
+
