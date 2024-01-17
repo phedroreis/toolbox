@@ -247,106 +247,52 @@ public class TextFileHandler {
     }//setContent
     
     /**
-     * O objetivo deste método é bloquear certos padrões de substrings, para 
-     * que não sejam localizadas pelo método 
-     * {@link TextFileHandler#edit(toolbox.Regex, toolbox.TextFileEditor) edit} ou
-     * o método {@link TextFileHandler#edit(String, toolbox.TextFileEditor) edit}.
+     * Retorna o conteúdo atual do arquivo que foi lido.
      * 
-     * <p>As substrings que corresponderem ao padrão passado no argumento, não 
-     * serão localizadas pela regex de nenhum dos métodos edit(). Mesmo 
-     * que correspondam ao padrão.</p>
-     * 
-     * <p>No entanto, ainda existe possibilidade desta substring ser editada
-     * caso ela ocorra como substring de uma String localizada por algum dos
-     * métodos edit.</p>
-     * 
-     * <p>Neste caso, o método edit não terá localizado a substring bloqueada,
-     * mas sim a String que a contém. E ao editar esta String, poderá, 
-     * eventualmente, vir a editar a própria substring bloqueada.</p>
-     * 
-     * <p>Suponha que se queira editar, em um arquivo tipo HTML, todas as tags
-     * img para alterar seus atributos alt. Porém imagine que não seja 
-     * desejável editar os títulos h1 deste arquivo, mesmo que estes 
-     * contenham tags img.</p>
-     * 
-     * <p>Neste caso, uma expressão regular que localize tags h1 e seus 
-     * escopos, se passada a este método previamente, antes da execução de um
-     * dos métodos edit, impediria que as tags img no escopo destes h1 fossem
-     * eitadas</p>
-     * 
-     * @param regex Um objeto Regex construído com uma expressão regular
-     * definindo quais substrings não serão localizadas pelos métodos edit.
+     * @return O conteúdo atual do arquivo lido.
      */
     /*-------------------------------------------------------------------------
  
     --------------------------------------------------------------------------*/     
-    public void lock(final Regex regex) {
+    public String getContent() {
         
-        if (content == null) return;
-       
-        regex.setTarget(content);
+        return content;
         
-        String match;
-        
-        while ((match = regex.find()) != null) {
-            
-            lock.put("\u0ca0\u13c8" + countLocks++ + "\u13da\u0ca0", match);
-        }
-        
-        for (String key : lock.keySet()) {
-            
-            content = content.replace(lock.get(key), key);
-        }
-        
-    }//lock
-    
-  /**
-     * O objetivo deste método é bloquear certos padrões de substrings, para 
-     * que não sejam localizadas pelo método 
-     * {@link TextFileHandler#edit(toolbox.Regex, toolbox.TextFileEditor) edit} ou
-     * o método {@link TextFileHandler#edit(String, toolbox.TextFileEditor) edit}.
-     * 
-     * <p>As substrings que corresponderem ao padrão passado no argumento, não 
-     * serão localizadas pela regex de nenhum dos métodos edit(). Mesmo 
-     * que correspondam ao padrão.</p>
-     * 
-     * <p>No entanto, ainda existe possibilidade desta substring ser editada
-     * caso ela ocorra como substring de uma String localizada por algum dos
-     * métodos edit.</p>
-     * 
-     * <p>Neste caso, o método edit não terá localizado a substring bloqueada,
-     * mas sim a String que a contém. E ao editar esta String, poderá, 
-     * eventualmente, vir a editar a própria substring bloqueada.</p>
-     * 
-     * <p>Suponha que se queira editar, em um arquivo tipo HTML, todas as tags
-     * img para alterar seus atributos alt. Porém imagine que não seja 
-     * desejável editar os títulos h1 deste arquivo, mesmo que estes 
-     * contenham tags img.</p>
-     * 
-     * <p>Neste caso, uma expressão regular que localize tags h1 e seus 
-     * escopos, se passada a este método previamente, antes da execução de um
-     * dos métodos edit, impediria que as tags img no escopo destes h1 fossem
-     * eitadas</p>
-     * 
-     * @param regex Um expressão regular definindo quais substrings não serão
-     * localizadas pelos métodos edit.
-     */   
-     /*-------------------------------------------------------------------------
- 
-    --------------------------------------------------------------------------*/     
-    public void lock(final String regex) {
-       
-        lock(new Regex(regex));        
+    }//getContent    
 
-    }//lock  
-    
-    /**
-     * Restaura todos os blocos que foram travados para edição.
-     */
     /*-------------------------------------------------------------------------
- 
+      O objetivo deste método é bloquear certos padrões de substrings, para 
+      que não sejam localizadas pelo método edit()
+    --------------------------------------------------------------------------*/     
+    private void lock(final String[] patterns) {
+        
+        if (patterns == null) return;
+               
+        for (String pattern : patterns) {
+            
+            Regex regex = new Regex(pattern);
+            
+            regex.setTarget(content);
+
+            String match;
+
+            while ((match = regex.find()) != null) {
+
+                lock.put("\u0ca0\u13c8" + countLocks++ + "\u13da\u0ca0", match);
+            }
+
+            for (String key : lock.keySet()) {
+
+                content = content.replace(lock.get(key), key);
+            }
+        }
+        
+    }//lock    
+    
+    /*-------------------------------------------------------------------------
+             Restaura todos os blocos que foram travados para edição.
     --------------------------------------------------------------------------*/       
-    public void restoreLocks() {
+    private void restoreLocks() {
         
         for (String key : lock.keySet()) {
             
@@ -365,6 +311,7 @@ public class TextFileHandler {
      * 
      * @param regex Um objeto Regex construído com uma expressão regular que
      * localize o tipo de padrão a ser editado.
+     * @param lockPatterns
      * 
      * @param editor Um objeto de uma classe que estenda toolbox.TextFileEditor
      * e forneça o método para editar propriamente as substrings localizadas por
@@ -373,9 +320,15 @@ public class TextFileHandler {
     /*-------------------------------------------------------------------------
  
     --------------------------------------------------------------------------*/      
-    public void edit(final Regex regex, final TextFileEditor editor) {
+    public void edit(
+        final Regex regex,
+        final String[] lockPatterns,
+        final TextFileEditor editor
+    ) {
         
         if (content == null) return;
+        
+        lock(lockPatterns);
         
         Map<String, String> map = new HashMap<>();  
         
@@ -395,7 +348,7 @@ public class TextFileHandler {
             content = content.replace(key, map.get(key));
         }
         
-        restoreLocks();
+        if (lockPatterns != null) restoreLocks();
         
         scanner = new Scanner(content);
            
@@ -407,6 +360,7 @@ public class TextFileHandler {
      * 
      * @param regex Uma expressão regular que localize o tipo de padrão a ser 
      * editado.
+     * @param lockPatterns
      * 
      * @param editor Um objeto de uma classe que estenda toolbox.TextFileEditor
      * e forneça o método para editar propriamente as substrings localizadas por
@@ -415,9 +369,12 @@ public class TextFileHandler {
     /*-------------------------------------------------------------------------
  
     --------------------------------------------------------------------------*/      
-    public void edit(final String regex, final TextFileEditor editor) {
+    public void edit(
+        final String regex,
+        final String[] lockPatterns,
+        final TextFileEditor editor) {
         
-        edit(new Regex(regex), editor);
+        edit(new Regex(regex), lockPatterns, editor);
            
     }//edit
     
@@ -569,7 +526,7 @@ public class TextFileHandler {
     --------------------------------------------------------------------------*/     
     public String nextToken() {
         
-         if (scanner.hasNext()) 
+        if (scanner.hasNext()) 
             return scanner.next();
         else {
             scanner = new Scanner(content);
@@ -593,48 +550,5 @@ public class TextFileHandler {
         return content;
         
     }//toString
-    
-    /**
-     * Exemplo de uso.
-     * 
-     * @param args Não usado.
-     * 
-     * @throws IOException Em caso de erro de IO.
-     */
-    /*-------------------------------------------------------------------------
- 
-    --------------------------------------------------------------------------*/     
-    public static void main(String[] args) throws IOException {
-
-        TextFileHandler textFile = new TextFileHandler("teste.txt");
-        
-        textFile.read();
-        
-        textFile.lock(new Regex("\\(22\\)3256-8890"));
-        
-        textFile.edit(
-            "(\\(\\d{2}\\))?((9\\d{4})|[32]\\d{3})-\\d{4}", 
-            new MyEditor()
-        );
-        
-        textFile.writeWithExtPrefix("test");
-        
-        System.out.println(textFile.getPath() + "---" + getPath("teste.txt"));
-
-        
-     }//main
-    
-    private static class MyEditor extends TextFileEditor {
-
-        @Override
-        public String edit(String match) {
-            
-            if (match.startsWith("(22)")) 
-                return match.replace("(22)" , "(33)");
-            else
-                return match;
-        }
-        
-    }
-    
+     
 }//classe TextFileHandler
