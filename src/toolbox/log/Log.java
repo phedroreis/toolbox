@@ -78,6 +78,19 @@ public final class Log {
         
     }
     
+    /**
+     * Retorna o objeto PrintStream usado para escrever no arquivo de log.
+     * 
+     * <p>Pode ser passado como parametro ao metodo printStackTrace() herdado da classe Exception.
+     * 
+     * @return O objeto PrintStream usado para escrever no arquivo de log.
+     */
+    public static PrintStream getStream() {
+        
+        return logStream;
+        
+    }//getStream
+    
     /*******************************************************************************************************************
      * Retorna se ha um arquivo de log configurado e aberto.
      * 

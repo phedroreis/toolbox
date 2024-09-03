@@ -83,22 +83,6 @@ public class TextFileHandler {
     }//getName
     
     /***************************************************************************
-    * Obtém a extensão no nome de um arquivo. Sem o ponto.
-    *
-    * @param pathname O pathname do arquivo.
-    *
-    * @return A extensão do arquivo sem o ponto. Se o arquivo nao tiver
-    * extensao sera retornada uma string vazia.
-    ***************************************************************************/
-    public static String getExt(final String pathname) {
-     
-        int p = pathname.lastIndexOf('.');
-        if (p < 1) return "";
-        return pathname.substring(p + 1, pathname.length());
-     
-    }//getExt
-    
-    /***************************************************************************
     * Obtém a extensão do arquivo no argumento <b><i>pathname</i></b> passado
     * ao construtor da classe. Sem o ponto.
     *
@@ -160,8 +144,9 @@ public class TextFileHandler {
         this.pathname = pathname;
         
         filename = new File(pathname).getName();
-     
-        extension = getExt(filename);
+        
+        int p = pathname.lastIndexOf('.');
+        extension = (p < 1) ? "" : pathname.substring(p + 1, pathname.length());        
         
         matcher = null;
      

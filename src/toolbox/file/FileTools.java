@@ -66,4 +66,35 @@ public final class FileTools {
         
     }//createDirsIfNotExists
     
+    /**
+     * Deleta todos os diretorios no caminho ate encontrar um diretorio pai nao vazio.
+     * 
+     * @param dir O diretorio e o caminho do diretorio.
+     * 
+     * @throws SecurityException Se o Security Manager do sistema impedir o acesso ao diretorio.
+     */
+    public static void deleteDirsIfEmpty(File dir) throws SecurityException {
+        
+        while (dir != null) {
+            
+            if (!dir.delete()) return;
+            dir = dir.getParentFile();
+            
+        } 
+        
+    }//deleteDirsIfEmpty    
+ 
+    /**
+     * Deleta todos os diretorios no caminho ate encontrar um diretorio pai nao vazio.
+     * 
+     * @param dir O diretorio e o caminho do diretorio.
+     * 
+     * @throws SecurityException Se o Security Manager do sistema impedir o acesso ao diretorio.
+     */
+    public static void deleteDirsIfEmpty(final String dir) throws SecurityException {
+        
+        deleteDirsIfEmpty(new File(dir));
+        
+    }//deleteDirsIfEmpty  
+    
 }//classe FileTools
