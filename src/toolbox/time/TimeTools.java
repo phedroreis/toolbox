@@ -10,7 +10,7 @@ import java.util.Date;
  * @since 1.0
  * @version 1.0 - 24 de agosto de 2024
  */
-public class Util {
+public class TimeTools {
     /**
      * Converte o formato do atributo datetime de uma tag time para {@link java.util.Calendar Calendar}.
      * 
@@ -88,4 +88,4 @@ public class Util {
         
     }//rightNowFormat  
 
-}//classe Util
+}//classe TimeTools

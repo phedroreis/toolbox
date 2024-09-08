@@ -15,7 +15,7 @@ import java.nio.channels.ReadableByteChannel;
  * @version 1.0 - 14 de agosto de 2024
  * @since 1.0
  **********************************************************************************************************************/
-public final class Util {
+public final class NetTools {
     
     /*******************************************************************************************************************
      * Baixa o arquivo indicado pela URL para o pathname passado ao metodo.
@@ -48,4 +48,4 @@ public final class Util {
         
     }//downloadUrlToPathname()
 
-}//classe Util
+}//classe NetTools

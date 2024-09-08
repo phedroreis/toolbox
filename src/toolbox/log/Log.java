@@ -151,7 +151,7 @@ public final class Log {
      ******************************************************************************************************************/
     public static void printDate(final Date date) {
         
-        print(toolbox.time.Util.dateFormat(date));
+        print(toolbox.time.TimeTools.dateFormat(date));
         
     }//printDate
     
@@ -162,7 +162,7 @@ public final class Log {
      ******************************************************************************************************************/
     public static void printTime(final Date date) {
         
-        print(toolbox.time.Util.timeFormat(date));
+        print(toolbox.time.TimeTools.timeFormat(date));
         
     }//printTime
     
@@ -171,7 +171,7 @@ public final class Log {
      ******************************************************************************************************************/
     public static void printDateTime() {
         
-        print(toolbox.time.Util.rightNowFormat());
+        print(toolbox.time.TimeTools.rightNowFormat());
         
     }//printDateTime
     
