@@ -130,10 +130,8 @@ public final class StringTools {
      * @return 
      */
     public static String normalizeToCompare(final String str) {
-        
-        String target = str.replaceAll("\\W", "");
-
-        char[] charArray = target.toLowerCase().toCharArray();
+                
+        char[] charArray = str.toLowerCase().toCharArray();
 
         for (int i = 0; i < charArray.length; i++) {
 
@@ -143,17 +141,21 @@ public final class StringTools {
                 case '\u00e1':
                 case '\u00e2':
                 case '\u00e3':
+                case '\u00e4':
                     charArray[i] = 'a'; break;
                 case '\u00e8':
                 case '\u00e9':
                 case '\u00ea':
                 case '\u00eb':
+                case '\u0113':
+                case '\u0115':
                     charArray[i] = 'e'; break;
                 case '\u00ec':
                 case '\u00ed':
                 case '\u00ee':
                 case '\u00ef':
                 case '\u0129':
+                case '\u012b':
                     charArray[i] = 'i'; break;
                 case '\u00f2':
                 case '\u00f3':
@@ -166,6 +168,7 @@ public final class StringTools {
                 case '\u00fb':
                 case '\u00fc':
                 case '\u0169':
+                case '\u016b':
                     charArray[i] = 'u'; break;
                 case '\u00e7':
                     charArray[i] ='c'; break;                    
@@ -174,9 +177,9 @@ public final class StringTools {
             }
             
         }//for
+ 
+        return new String(charArray).replaceAll("\\W", "");
 
-        return new String(charArray);
-
-    }//normalizeToCOmpare      
+    }//normalizeToCOmpare  
     
 }//classe StringTools

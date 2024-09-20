@@ -75,7 +75,7 @@ public final class Log {
         indentActive = true;
         indentString = "";
         STACK = new LinkedList<>();
-        
+
     }
     
     /**
@@ -372,7 +372,7 @@ public final class Log {
     /**
      * Cria um arquivo de log no path atribuido, cujo nome sera a data e hora da criacao do arquivo.
      * 
-     * @param path O path onde o arquivo sera criado. Sem barra (/) no final.
+     * @param path O path onde o arquivo sera criado.
      * 
      * @throws FileNotFoundException Se o arquivo nao puder ser criado.
      */
@@ -380,10 +380,10 @@ public final class Log {
         
         String logFilename = 
             String.format(
-                path + '/' + "%1$td-%1$tm-%1$tY(%1$tHh-%1$tMm-%1$tSs).log", 
+                path + (path.endsWith("/") ? "" : '/') + "%1$td-%1$tm-%1$tY(%1$tHh-%1$tMm-%1$tSs).log", 
                 Calendar.getInstance().getTime()
             );
-        
+
         openFile(logFilename);
     }    
 
