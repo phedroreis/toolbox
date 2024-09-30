@@ -7,8 +7,8 @@ import java.util.Date;
  * Metodos estaticos uteis para manipulacao de data e hora.
  * 
  * @author Pedro Reis
- * @since 1.0
- * @version 1.0 - 24 de agosto de 2024
+ * @since 1.0 - 24 de agosto de 2024
+ * @version 1.0 
  */
 public class TimeTools {
     /**

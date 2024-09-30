@@ -8,8 +8,10 @@ import java.util.HashMap;
  * <p>O nome da tag, a lista de atributos (se houver) e possivelmente o conteudo do escopo da tag.
  * 
  * @author Pedro Reis
- * @version 1.0 - 24 de abril de 2024 
- * @since 1.0
+ * 
+ * @version 1.0 
+ * 
+ * @since 1.0 - 24 de abril de 2024 
  **********************************************************************************************************************/
 public final class Tag {
     

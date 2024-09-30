@@ -8,8 +8,8 @@ import javax.management.modelmbean.XMLParseException;
  * XmlParser deste pacote, ao localizar uma tag de abertura ou uma tag de fechamento.
  * 
  * @author Pedro Reis 
- * @version 1.0 - 24 de abril de 2024
- * @since 1.0
+ * @version 1.0 
+ * @since 1.0 - 24 de abril de 2024
  **********************************************************************************************************************/
 public abstract class TagParser {
     

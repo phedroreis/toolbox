@@ -8,8 +8,8 @@ import javax.management.modelmbean.XMLParseException;
  * Esta classe fornece a fucionalidade de parsing para arquivos XML.
  * 
  * @author Pedro Reis 
- * @version 1.0 - 23 de abril de 2024
- * @since 1.0
+ * @version 1.0 
+ * @since 1.0 - 23 de abril de 2024
  **********************************************************************************************************************/
 public final class XmlParser {
     
@@ -32,7 +32,7 @@ public final class XmlParser {
         
         this.xmlContent = xmlContent;
         
-        tagRegex = new toolbox.regex.Regex("</?(\\w+)(.*?)>");
+        tagRegex = new toolbox.regex.Regex("</?(\\w+)([\\s\\S]*?)>");
         tagRegex.setTarget(xmlContent);
         
         stack = new LinkedList<>();

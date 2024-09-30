@@ -13,7 +13,7 @@ public class CCTest {
     public static void main(String[] args) throws IOException, XMLParseException {
         
         toolbox.textfile.TextFileHandler tfh = 
-            new toolbox.textfile.TextFileHandler("/home/hugo/page.html");
+            new toolbox.textfile.TextFileHandler("/home/hugo/manjaro.html");
         
         tfh.read();        
                 
@@ -28,15 +28,16 @@ private static class Parser extends TagParser {
     @Override
     public void openTag(final Tag t) {
         
-        if (t.getTagName().equals("li")) {
+        if (t.getTagName().equals("script")) {
             
-            HashMap<String, String> map = t.getAttrMap();
+            System.out.println(t);
             
-            String attrValue = map.get("class");
-
-            if (attrValue != null && attrValue.equals("header")) t.notifyClosing();
+            //HashMap<String, String> map = t.getAttrMap();
+            
+            t.notifyClosing();
             
         }//openTag
+ 
         
     }
     

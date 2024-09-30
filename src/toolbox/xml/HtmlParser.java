@@ -9,8 +9,10 @@ import javax.management.modelmbean.XMLParseException;
  * Classe para realizar o parsing de documentos HTML.
  * 
  * @author Pedro Reis 
- * @version 1.0 - 23 de abril de 2024
- * @since 1.0
+ * 
+ * @version 1.0 
+ * 
+ * @since 1.0 - 23 de abril de 2024
  **********************************************************************************************************************/
 public final class HtmlParser {
     
@@ -52,7 +54,7 @@ public final class HtmlParser {
         
         this.htmlContent = htmlContent;
         
-        tagRegex = new toolbox.regex.Regex("</?(\\w+)(.*?)>");
+        tagRegex = new toolbox.regex.Regex("</?([A-Za-z]+)([\\S\\s]*?)>");
         tagRegex.setTarget(htmlContent);
         
         stack = new LinkedList<>();
@@ -111,7 +113,7 @@ public final class HtmlParser {
         
         String tagMatched;
         
-        Tag topTag;
+        boolean nonHtmlScope = false;
         
         while ((tagMatched = tagRegex.find()) != null) { 
             
@@ -122,6 +124,10 @@ public final class HtmlParser {
             String topTagName = getTopTagName();  
             
             if (tagMatched.charAt(1) == '/') {
+                
+                if (nonHtmlScope && !( tagMatchedName.equals("script") || tagMatchedName.equals("style") ) ) continue;
+                
+                if (nonHtmlScope) nonHtmlScope = false;
 
                 if (!tagMatchedName.equals(topTagName)) {
                 
@@ -151,6 +157,8 @@ public final class HtmlParser {
                 popStack(tagMatchedPosition, tagMatchedPosition + tagMatched.length());
               
             } else {
+                
+                if (nonHtmlScope) continue;
                
                 Tag tag = new Tag(
                     tagMatchedName, 
@@ -195,6 +203,12 @@ public final class HtmlParser {
                             popStack(tagMatchedPosition, tagMatchedPosition + tagMatched.length());
                         stack.push(tag);
                         break;
+                        
+                    case "script":
+                    case "style":
+                        nonHtmlScope = true;
+                        stack.push(tag);                        
+                        break;
                     
                     //restantes requerem tag de fechamento                   
                     default: 
@@ -208,12 +222,8 @@ public final class HtmlParser {
             
         }//while
         
-        while ( (topTag = stack.peek()) != null ) {
-            
-            popStack(htmlContent.length(), htmlContent.length());
-            
-        }
-        
+        while ( stack.peek() != null ) popStack(htmlContent.length(), htmlContent.length());
+
     }//parse
     
     /*******************************************************************************************************************
