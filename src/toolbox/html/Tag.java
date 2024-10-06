@@ -1,6 +1,10 @@
 package toolbox.html;
 
 import java.util.HashMap;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /***********************************************************************************************************************
  * Um objeto dessa classe armazena e fornece os dados de tags XML e HTML.
@@ -174,6 +178,25 @@ public final class Tag {
         return (value.equals(v));
         
     }//contains
+ 
+    /**
+     * 
+     * @param clas
+     * @return 
+     */
+    public boolean isClass(final String clas) {
+        
+        String v = attrMap.get("class");
+        
+        if (v == null) return false;
+        
+        Scanner scanner = new Scanner(v);
+        
+        while (scanner.hasNext()) if (scanner.next().equalsIgnoreCase(clas)) return true;
+        
+        return false;
+ 
+    }//isClass
     
     /*******************************************************************************************************************
      * Deve ser chamado por um objeto <code>TagParser</code> quando este for notificado da abertura 
