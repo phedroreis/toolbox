@@ -81,7 +81,10 @@ public final class XmlParser {
 
                 if (tag.isNotifyClosingRequired()) {
 
-                    tag.setTagContent(xmlContent.substring(tag.getStartContentIndex(), tagPosition));
+                    tag.setTagContent(xmlContent.substring(tag.getStartTagContentIndex(), tagPosition));
+                    
+                    tag.setEndTagBlockIndex(tagPosition + match.length());  
+                    
                     tagParser.closeTag(tag);
 
                 }
@@ -91,7 +94,8 @@ public final class XmlParser {
                 tag = new Tag(
                     tagId,
                     tagRegex.group(2),
-                    tagPosition
+                    tagPosition,
+                    tagPosition + match.length()
                 );
 
                 if (!match.endsWith("/>")) {

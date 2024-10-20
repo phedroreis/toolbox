@@ -2,9 +2,6 @@ package toolbox.html;
 
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /***********************************************************************************************************************
  * Um objeto dessa classe armazena e fornece os dados de tags XML e HTML.
@@ -22,8 +19,12 @@ public final class Tag {
     private final String tagName;
     
     private final HashMap<String, String> attrMap;
+    
+    private final int startTagBlockIndex;
+    
+    private int endTagBlockIndex;
 
-    private final int startContentIndex;
+    private final int startTagContentIndex;
 
     private String tagContent;
     
@@ -38,19 +39,24 @@ public final class Tag {
      * 
      * @param tagAttrs A <code>String</code> com a lista de atributos da tag.
      * 
+     * @param startBlockIndex Posicao no arquivo do primeiro caractere da tag de abertura.
+     * 
      * @param startContentIndex A posicao no arquivo do primeiro caractere do escopo da tag.
      * Sem efeito para tags self-closing.
      ******************************************************************************************************************/
     protected Tag(
         final String tagName, 
         final String tagAttrs, 
+        final int startBlockIndex,
         final int startContentIndex) {
         
         this.tagName = tagName;        
 
         attrMap = getAttrMap(tagAttrs);
-           
-        this.startContentIndex = startContentIndex;
+        
+        startTagBlockIndex = startBlockIndex;
+                   
+        startTagContentIndex = startContentIndex;
         
         notifyClosing = false;
         
@@ -71,7 +77,7 @@ public final class Tag {
         
         HashMap<String, String> mapKeyValue = new HashMap<>();
         
-        while (regex.find() != null) mapKeyValue.put(regex.group(1), regex.group(2));
+        while (regex.find() != null) mapKeyValue.put(regex.group(1).toLowerCase(), regex.group(2));
             
         return mapKeyValue;
         
@@ -96,29 +102,59 @@ public final class Tag {
         return previousTagParser;
         
     }//getPreviousParser
-     
-    /*******************************************************************************************************************
-     * Retorna o indice do primeiro caractere do escopo da tag.
-     * 
-     * @return Indice do primeiro caractere do escopo da tag.
-     ******************************************************************************************************************/
-    public int getStartContentIndex() {
-        
-        return startContentIndex;
-        
-    }//getStartContentIndex
     
     /**
      * 
      * @return 
      */
-    public int getEndContentIndex() {
+    public int getStartTagBlockIndex() {
+        
+        return startTagBlockIndex;
+        
+    }//getStartTagBlockIndex
+    
+    /**
+     * 
+     * @param endTagBlockIndex 
+     */
+    protected void setEndTagBlockIndex(int endTagBlockIndex) {
+        
+        this.endTagBlockIndex = endTagBlockIndex;
+        
+    }//setEndTagBlockIndex  
+    
+    /**
+     * 
+     * @return 
+     */
+    public int getEndTagBlockIndex() {
+        
+        return endTagBlockIndex;
+        
+    }//getEndTagBlockIndex
+
+    /*******************************************************************************************************************
+     * Retorna o indice do primeiro caractere do escopo da tag.
+     * 
+     * @return Indice do primeiro caractere do escopo da tag.
+     ******************************************************************************************************************/
+    public int getStartTagContentIndex() {
+        
+        return startTagContentIndex;
+        
+    }//getStartTagContentIndex
+    
+    /**
+     * 
+     * @return 
+     */
+    public int getEndTagContentIndex() {
         
         if (tagContent == null) return -1;
         
-        return startContentIndex + tagContent.length();
+        return startTagContentIndex + tagContent.length();
         
-    }//getEndContentIndex
+    }//getEndTagContentIndex
     
     /*******************************************************************************************************************
      * Retorna o mapa com os pares chaves/valor dos atributos da tag.
@@ -173,7 +209,7 @@ public final class Tag {
      */
     public boolean contains(final String attr, final String value) {
         
-        String v = attrMap.get(attr);
+        String v = attrMap.get(attr.toLowerCase());
         
         return (value.equals(v));
         
@@ -192,11 +228,22 @@ public final class Tag {
         
         Scanner scanner = new Scanner(v);
         
-        while (scanner.hasNext()) if (scanner.next().equalsIgnoreCase(clas)) return true;
+        while (scanner.hasNext()) if (scanner.next().equals(clas)) return true;
         
         return false;
  
     }//isClass
+    
+    /**
+     * 
+     * @param id
+     * @return 
+     */
+    public boolean isId(final String id) {
+        
+        return contains("id", id);        
+        
+    }//isId
     
     /*******************************************************************************************************************
      * Deve ser chamado por um objeto <code>TagParser</code> quando este for notificado da abertura 

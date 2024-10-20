@@ -69,7 +69,7 @@ public final class HtmlParser {
     /*==================================================================================================================
      * 
      =================================================================================================================*/
-    private void popStack(final int endContentIndex) throws Exception {
+    private void popStack(final int endContentIndex, final int endBlockIndex) throws Exception {
         
         Tag tag = null;
         
@@ -88,7 +88,9 @@ public final class HtmlParser {
         
         if (tag.isNotifyClosingRequired()) {
             
-            tag.setTagContent(htmlContent.substring(tag.getStartContentIndex(), endContentIndex));
+            tag.setTagContent(htmlContent.substring(tag.getStartTagContentIndex(), endContentIndex));
+            
+            tag.setEndTagBlockIndex(endBlockIndex);
 
             tagParser.closeTag(tag);  
             
@@ -140,6 +142,7 @@ public final class HtmlParser {
                 Tag tag = new Tag(
                     tagId, 
                     tagRegex.group(2),
+                    tagPosition,
                     tagPosition + match.length()
                 );
                 
@@ -184,7 +187,7 @@ public final class HtmlParser {
                     tag.setPreviousParser(tagParser);
                     tagParser = innerParser;
                     
-                }
+                } 
                 
             }
             else {//tags de fechamento
@@ -198,7 +201,7 @@ public final class HtmlParser {
                
                 if (!tagId.equals(getTopStackedTagId())) exception(tagId);  
                  
-                popStack(tagPosition);           
+                popStack(tagPosition, tagPosition + match.length());           
             }
             
             
